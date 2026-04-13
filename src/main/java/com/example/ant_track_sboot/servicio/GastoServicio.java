@@ -1,9 +1,13 @@
 package com.example.ant_track_sboot.servicio;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.example.ant_track_sboot.modelo.Gasto;
 import com.example.ant_track_sboot.repositorio.IGastoRepositorio;
 
@@ -19,26 +23,57 @@ public class GastoServicio {
     public GastoServicio(IGastoRepositorio gastoRepositorio) {
         this.gastoRepositorio = gastoRepositorio;
     }
-     // 1. BUSCAR TODOS
+     
+
+    //1. 1 guardar validadando gasto
+
+    public Gasto guardarGasto(Gasto datosGasto){ 
+
+        //validando descripcion vacio
+        if(datosGasto.getDescripcion() == null || datosGasto.getDescripcion().isBlank() 
+            || datosGasto.getDescripcion().isEmpty() ){
+
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "la descripcion e necesaria"
+            );
+            
+        }
+
+        //validando numero
+        if(datosGasto.getValor().isNaN()){
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "debe se un numero, no letras"
+            );
+        }
+
+    return gastoRepositorio.save(datosGasto);
+        
+
+    }
+
+    // 2. BUSCAR TODOS
    
     public List<Gasto> buscarTodos() {
         return gastoRepositorio.findAll();
     }
 
-    // 1. GUARDAR
-   
-    public Gasto guardar(Gasto gasto) {
-        return gastoRepositorio.save(gasto);
-    }
-
-    // 2. BUSCAR POR ID
+    // 3. BUSCAR POR ID
      //indica que este método viene de la interfaz.
     public Gasto buscarPorId(Long id) {
-        return gastoRepositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + id));
+        
+        Optional<Gasto> gasto = gastoRepositorio.findById(id);
+       
+        if (!gasto.isPresent()) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "no existe el gasto buscado"
+            );
+        }
+        return gasto.get(); //funcion del optional
+
+       
     }
 
-    // 3. BUSCAR POR ATRIBUTO (nombre parcial)
+    // 4. BUSCAR POR ATRIBUTO (nombre parcial)
    
     public List<Gasto> buscarPorNombre(String nombre) {
         return gastoRepositorio.findByDescripcionContaining(nombre);

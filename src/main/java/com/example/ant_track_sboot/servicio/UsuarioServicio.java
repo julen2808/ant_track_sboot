@@ -1,46 +1,70 @@
 package com.example.ant_track_sboot.servicio;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.example.ant_track_sboot.modelo.Usuario;
 import com.example.ant_track_sboot.repositorio.IUsuarioRepositorio;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class UsuarioServicio {
 
-    @Autowired
-    private IUsuarioRepositorio usuarioRepositorio;
+    private final IUsuarioRepositorio usuarioRepositorio;
 
-    // Inyección por constructor (Recomendado)
+    // Constructor para conectar el repositorio
     public UsuarioServicio(IUsuarioRepositorio usuarioRepositorio) {
         this.usuarioRepositorio = usuarioRepositorio;
     }
 
+    
+
+    // GUARDAR USUARIO
+    public Usuario guardar_usuario(Usuario datosUsario){
+        // Validaciones manuales
+        if(datosUsario.getNombre() == null || datosUsario.getNombre().isBlank()){
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "El nombre es obligatorio"
+            );
+        }
+
+        if(datosUsario.getDocumento() == null || datosUsario.getDocumento().length() < 5){
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "El documento es inválido"
+            );
+        }
+
+        // Guardamos el objeto que recibimos por parámetro
+        return usuarioRepositorio.save(datosUsario);
+    }
+
     // LISTAR TODO
-    @Transactional(readOnly = true)
     public List<Usuario> buscarTodos() {
+        // Simplemente pedimos todo  datos al repositorio
         return usuarioRepositorio.findAll();
     }
 
-    // GUARDAR
-    @Transactional
-    public Usuario guardar(Usuario usuario) {
-        return usuarioRepositorio.save(usuario);
-    }
-
     // BUSCAR POR ID
-    @Transactional(readOnly = true)
     public Usuario buscarPorId(Integer id) {
-        return usuarioRepositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+        
+        Optional<Usuario> usuario = usuarioRepositorio.findById(id);
+
+        if(!usuario.isPresent()){
+
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "No existe el usuario buscado"
+            );
+
+        }
+
+        return usuario.get();
     }
 
     // EDITAR
-    @Transactional
     public Usuario editar(Integer id, Usuario usuarioActualizado) {
         Usuario usuarioExistente = buscarPorId(id);
 
@@ -57,13 +81,14 @@ public class UsuarioServicio {
         usuarioExistente.setGastos(usuarioActualizado.getGastos());
         usuarioExistente.setMetodosPago(usuarioActualizado.getMetodosPago());
 
-        return usuarioRepositorio.save(usuarioExistente);
+    return usuarioRepositorio.save(usuarioExistente);
     }
 
     // ELIMINAR
-    @Transactional
     public void eliminar(Integer id) {
         Usuario usuario = buscarPorId(id);
         usuarioRepositorio.delete(usuario);
     }
 }
+
+

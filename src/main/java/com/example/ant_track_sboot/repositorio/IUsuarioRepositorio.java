@@ -22,8 +22,7 @@ public interface IUsuarioRepositorio extends JpaRepository<Usuario, Integer> {
     //si me piden un filtro o consulta personalizada si no exite poner un campo en el modelo
 
     //buscar por nombres que contengan nnn (lista)
-    List<Usuario> findByNombresContaining(List<Usuario>  findByNombre(String nombre););
-
+   List<Usuario> findByNombreContaining(String nombre);
     //buscar por edad (lista)
     List<Usuario> findByEdad(Integer edad);
 

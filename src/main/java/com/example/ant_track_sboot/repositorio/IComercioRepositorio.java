@@ -21,16 +21,16 @@ public interface IComercioRepositorio extends JpaRepository <Comercio, Integer> 
 //ejemplo para busqueda personalizada:
 
 //buscar por nombre exacto(lista)
-//List<Comercio> findByNombreComercio(String nombreComercio);
+List<Comercio> findByNombreComercio(String nombreComercio);
 
 //buscar por documento(1)
-//Optional<Comercio> findByNit(String nit);
+Optional<Comercio> findByNit(String nit);
 
 //buscar por nombres que contengan nnn(lista)
-//List<Comercio> findByNombreComercioContaining(String nombreComercio);
+List<Comercio> findByNombreComercioContaining(String nombreComercio);
 
 //buscar por edad(lista)
-//List<Comercio> findByEdad(int edad);
+List<Comercio> findByEdad(int edad);
 
 
 }
