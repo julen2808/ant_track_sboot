@@ -19,7 +19,7 @@ public class Categoria {
     private String descripcion;
 
     @Column(nullable = false)
-    private double presupuestoMaximoMensual;
+    private Double presupuestoMaximoMensual;
 
     @Column(nullable = false)
     private double gastoMensual;
@@ -80,11 +80,11 @@ public class Categoria {
         this.descripcion = descripcion;
     }
 
-    public double getPresupuestoMaximoMensual() {
+    public Double getPresupuestoMaximoMensual() {
         return presupuestoMaximoMensual;
     }
 
-    public void setPresupuestoMaximoMensual(double presupuestoMaximoMensual) {
+    public void setPresupuestoMaximoMensual(Double presupuestoMaximoMensual) {
         this.presupuestoMaximoMensual = presupuestoMaximoMensual;
     }
 
